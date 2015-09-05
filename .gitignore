@@ -1,4 +1,4 @@
-# Git ignore - Ignore's compile files
+# Git ignore - Ignore's all compile files
 
 *.hi
 *.o

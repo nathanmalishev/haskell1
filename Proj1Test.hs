@@ -79,5 +79,6 @@ loop target guess other guesses = do
       let (guess',other') = nextGuess (guess,other) answer
       loop target guess' other' (guesses+1)
     else do
+    putStrLn $ show guess
     putStrLn "Invalid guess"
     exitFailure
