@@ -43,14 +43,11 @@ octaveComparison previous target = (length previous)
 eqNth :: Eq a => Int -> [a] -> [a] -> Bool
 eqNth n l1 l2 = (l1 !! n) == (l2 !! n)
 
-
---write a function that takes the guess & results and if something in all possible states would not compute
--- then its not the target
-
-
-
-
 -- take in possible targets and return the target that will leave the smallest amount of targets
+nextBestGuess :: [[String]] -> [String]
+nextBestGuess [] = []
+nextBestGuess (x:xs) = map $ ifTarget x xs
+
 
 --remove all guesses that does not have at least one of these pitches
 --Take in previous guess and filter down possibilities
@@ -81,3 +78,20 @@ pitchsInGuess [] _ = False
 pitchsInGuess (p:pitches) guess 
     | p `elem` guess = True
     | otherwise = pitchsInGuess pitches guess
+
+
+
+-- makes sure there is no pitch that is the same
+validChord :: [String] -> Bool
+validChord [] = True
+validChord (x:xs)
+    | x `elem` xs = False
+    | otherwise = validChord xs
+
+
+-- remove all occurences of an element from list
+remove :: (Ord a) => a ->[a] -> [a]
+remove _ [] = []
+remove a (x:xs)
+    | a == x = remove a xs
+    | otherwise = x : remove a xs

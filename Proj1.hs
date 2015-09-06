@@ -4,18 +4,17 @@
 module Proj1 (initialGuess, nextGuess, GameState) where
 
     import Data.List
-    data GameState = GameState { posPitch :: [[String]] }
+    data GameState = GameState { possibleChords :: [[String]] }
                                 
-
 
     initialGuess :: ([String],GameState)
     initialGuess = (["A1","G2","D3"], 
                 (GameState allPossibleStates))
 
     nextGuess :: ([String],GameState) -> (Int,Int,Int) -> ([String],GameState)
-    nextGuess ((xs_previous), (GameState posChord )) (pitch, note, octave) 
-        = ((head posChord), GameState  newPosChords  )
-        where newPosChords = [x | x<-posChord, ifTarget xs_previous x pitch note octave]
+    nextGuess (xs_previous, (GameState posChords )) (pitch, note, octave) 
+        = ((head newPosChords), GameState  newPosChords )
+        where newPosChords = [x | x<-posChords, ifTarget xs_previous x pitch note octave]
 
             
     --if target takes in previous guess and potentional guess and produces
@@ -46,28 +45,12 @@ module Proj1 (initialGuess, nextGuess, GameState) where
                 - (length $ deleteFirstsBy (eqNth 1) previous target) - pitchComparison previous target
 
 
-    -- | eqNth n l1 l2 returns True iff element n of l1 is equal to 
-    --   element n of l2.
+    --Returns true if nth elements are equal
     eqNth :: Eq a => Int -> [a] -> [a] -> Bool
-    eqNth n l1 l2 = (l1 !! n) == (l2 !! n)
+    eqNth n n1 n2 = (n1 !! n) == (n2 !! n)
    
 
-    -- makes sure there is no pitch that is the same
-    validChord :: [String] -> Bool
-    validChord [] = True
-    validChord (x:xs)
-        | x `elem` xs = False
-        | otherwise = validChord xs
-
-
-    -- remove all occurences of an element from list
-    remove :: (Ord a) => a ->[a] -> [a]
-    remove _ [] = []
-    remove a (x:xs)
-        | a == x = remove a xs
-        | otherwise = x : remove a xs
-
-
+    --Creates all 1330 possible guesses
     allPossibleStates:: [[String]]
     allPossibleStates = [[a]++[b]++[c] | a<- basicList, b<- basicList, c<- basicList, a/=b, a/=c, b/=c,c<a,b<a,b<c]
                 where basicList = [b++a| a<-["1","2","3"], b<-["A","B","C","D","E","F","G"]]
