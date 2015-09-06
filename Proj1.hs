@@ -9,13 +9,15 @@ module Proj1 (initialGuess, nextGuess, GameState) where
 
 
     initialGuess :: ([String],GameState)
-    initialGuess = (["A1","A2","A3"], 
+    initialGuess = (["A1","G2","D3"], 
                 (GameState allPossibleStates))
 
     nextGuess :: ([String],GameState) -> (Int,Int,Int) -> ([String],GameState)
     nextGuess ((xs_previous), (GameState posChord )) (pitch, note, octave) 
         = ((head posChord), GameState  newPosChords  )
         where newPosChords = [x | x<-posChord, ifTarget xs_previous x pitch note octave]
+
+            
     --if target takes in previous guess and potentional guess and produces
     -- the pitch, note & octave results
     ifTarget :: [String] -> [String] -> Int->Int->Int -> Bool
