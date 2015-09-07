@@ -13,9 +13,16 @@ module Proj1 (initialGuess, nextGuess, GameState) where
 
     nextGuess :: ([String],GameState) -> (Int,Int,Int) -> ([String],GameState)
     nextGuess (xs_previous, (GameState posChords )) (pitch, note, octave) 
-        = ((head newPosChords), GameState  newPosChords )
+        = ( halfGuess , GameState  ( removeGuess halfGuess newPosChords) )
         where newPosChords = [x | x<-posChords, ifTarget xs_previous x pitch note octave]
+              halfGuess = newPosChords !!( (length newPosChords)`div`2)
 
+    --removes a guess from a list of guesses
+    removeGuess :: [String] -> [[String]] -> [[String]]
+    removeGuess guess [] = []
+    removeGuess guess (p:allPos)
+        | guess == p = removeGuess guess allPos
+        | otherwise = p:removeGuess guess allPos
             
     --if target takes in previous guess and potentional guess and produces
     -- the pitch, note & octave results
@@ -53,4 +60,4 @@ module Proj1 (initialGuess, nextGuess, GameState) where
     --Creates all 1330 possible guesses
     allPossibleStates:: [[String]]
     allPossibleStates = [[a]++[b]++[c] | a<- basicList, b<- basicList, c<- basicList, a/=b, a/=c, b/=c,c<a,b<a,b<c]
-                where basicList = [b++a| a<-["1","2","3"], b<-["A","B","C","D","E","F","G"]]
+                where basicList = [b++a| a<-["1","2","3"], b<-["A","B","C","D","E","F","G"]] 
