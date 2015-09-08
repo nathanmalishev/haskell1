@@ -9,6 +9,22 @@ allPossibleStates = [[a]++[b]++[c] | a<- basicList, b<- basicList, c<- basicList
                 where basicList = [b++a| a<-["1","2","3"], b<-["A","B","C","D","E","F","G"]]
 
 
+--rate all guesses takes in all guesses and returns the guess with the max??
+bestGuess :: [[String]] -> [String] -> Int ->Int->Int->Int-> [String]
+bestGuess [] previousG maxG _ _ _= previousG 
+bestGuess (g:guesses) previousG maxG pitch note octave
+    | (newI > maxG) = bestGuess guesses g newI pitch note octave
+    | otherwise =  bestGuess guesses previousG maxG pitch note octave
+    where newI = rateGuess g guesses pitch note octave
+
+
+--takes in a guess & all possible states and returns the amount of branches it would cull
+-- the higher the score the better
+rateGuess :: [String] -> [[String]] -> Int ->Int->Int -> Int
+rateGuess pretendTarget [] _ _ _= 0
+rateGuess pretendTarget (p:possible) pitch note octave
+    | ifTarget pretendTarget p pitch note octave = 1 + rateGuess pretendTarget possible pitch note octave
+    | otherwise = 0+rateGuess pretendTarget possible pitch note octave
 
 --if target takes in previous guess and potentional guess and produces
     -- the pitch, note & octave results
@@ -43,10 +59,6 @@ octaveComparison previous target = (length previous)
 eqNth :: Eq a => Int -> [a] -> [a] -> Bool
 eqNth n l1 l2 = (l1 !! n) == (l2 !! n)
 
--- take in possible targets and return the target that will leave the smallest amount of targets
-nextBestGuess :: [[String]] -> [String]
-nextBestGuess [] = []
-nextBestGuess (x:xs) = map $ ifTarget x xs
 
 
 --remove all guesses that does not have at least one of these pitches
