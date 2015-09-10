@@ -23,12 +23,9 @@ require 'csv'
 fork{exec"rm #{@file_name}"}
 fork{exec"ghc -O2 --make Proj1Test"}
 
-@possible.each do |x|
-    @i +=1
-    if(@i % 10 == 0)
-        fork{exec"./Proj1Test #{x[0]} #{x[1]} #{x[2]} >> #{@file_name}"}
+@possible.sample(120).each do |x|
+    fork{exec"./Proj1Test #{x[0]} #{x[1]} #{x[2]} >> #{@file_name}"}
         #sleep(0.1)
-    end
 end
 
 
@@ -45,4 +42,4 @@ end
 scrape
 @average = @averages.reduce :+
 @average = @average / @averages.length
-print "Your average was  #{@average} "
+print "Test run #{@averages.length} \n Your average was  #{@average} "

@@ -7,34 +7,18 @@ module Proj1 (initialGuess, nextGuess, GameState) where
     data GameState = GameState { possibleChords :: [[String]] }
                                 
 
+    --initial Guess function
     initialGuess :: ([String],GameState)
-    initialGuess = (["A3","G2","D1"], (GameState allPossibleStates)) --["A3","G2","D1"]
+    initialGuess = ( firstGuess, (GameState (removeGuess firstGuess allPossibleStates))) 
+            where firstGuess = ["A3","G2","D1"]
+
 
     nextGuess :: ([String],GameState) -> (Int,Int,Int) -> ([String],GameState)
-    nextGuess (xs_previous, (GameState posChords )) (pitch, note, octave) 
-        = ( nextGuess, GameState  ( removeGuess nextGuess newPosChords))
+    nextGuess (xs_previous, (GameState posChords )) (pitch, note, octave) =
+            ( halfGuess, GameState  ( removeGuess halfGuess newPosChords))
         where newPosChords = [x | x<-posChords, ifTarget xs_previous x pitch note octave]
               halfGuess = newPosChords !!( (length newPosChords)`div`2)
-              nextGuess = bestGuess newPosChords xs_previous 0 pitch note octave
-
-
-    --rate all guesses takes in all guesses and returns the guess with the max??
-    bestGuess :: [[String]] -> [String] -> Int ->Int->Int->Int-> [String]
-    bestGuess [] previousG maxG _ _ _= previousG 
-    bestGuess (g:guesses) previousG maxG pitch note octave
-        | (newI > maxG) = bestGuess guesses g newI pitch note octave
-        | otherwise =  bestGuess guesses previousG maxG pitch note octave
-        where newI = rateGuess g guesses pitch note octave
-
-
-    --takes in a guess & all possible states and returns the amount of branches it would cull
-    -- the higher the score the better
-    rateGuess :: [String] -> [[String]] -> Int ->Int->Int -> Int
-    rateGuess pretendTarget [] _ _ _= 0
-    rateGuess pretendTarget (p:possible) pitch note octave
-        | ifTarget pretendTarget p pitch note octave = 1 + rateGuess pretendTarget possible pitch note octave
-        | otherwise = 0+rateGuess pretendTarget possible pitch note octave
-
+              
 
     --removes a guess from a list of guesses
     removeGuess :: [String] -> [[String]] -> [[String]]
@@ -51,7 +35,7 @@ module Proj1 (initialGuess, nextGuess, GameState) where
             && (octaveComparison xs_previous possible == octave) = True
         | otherwise = False
 
-        -- a function which takes in previous guess and target and returns its pitch hint
+    -- a function which takes in previous guess and target and returns its pitch hint
     pitchComparison :: [String] -> [String] -> Int
     pitchComparison [] _ = 0
     pitchComparison (p:previous) target 
@@ -72,6 +56,8 @@ module Proj1 (initialGuess, nextGuess, GameState) where
 
 
     --Returns true if nth elements are equal
+    -- You can't recode the wheel
+    -- Found in Proj test harness
     eqNth :: Eq a => Int -> [a] -> [a] -> Bool
     eqNth n n1 n2
         | (n1 !! n) == (n2 !! n) = True
